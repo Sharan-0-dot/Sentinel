@@ -1,5 +1,6 @@
 package com.Sentinel.Reimbursement_Service.Service;
 
+import com.Sentinel.Reimbursement_Service.DTO.OCRdata;
 import com.Sentinel.Reimbursement_Service.DTO.ReimbursementRequestDTO;
 import com.Sentinel.Reimbursement_Service.Entity.ReimbursementRequest;
 import com.Sentinel.Reimbursement_Service.DTO.Status;
@@ -20,7 +21,9 @@ public class ReimbursementService {
     private final ReimbursementRepo repo;
     private final StorageService storageService;
     private final OCRService ocrService;
+    private final AIService aiService;
 
+    @Transactional
     public ReimbursementRequest saveInitialRequest(ReimbursementRequestDTO data, String receiptUrl) {
         ReimbursementRequest request = new ReimbursementRequest();
         request.setEmployeeId(data.getEmployeeId());
@@ -35,7 +38,7 @@ public class ReimbursementService {
         return repo.save(request);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public String createRequest(ReimbursementRequestDTO data, MultipartFile file) throws Exception {
         String url = null;
         try {
@@ -48,6 +51,8 @@ public class ReimbursementService {
             String ocrResult = ocrService.extractText(file, options);
             log.info("ocr result received");
             System.out.print(ocrResult);
+            OCRdata extractedData = aiService.extractOCRData(ocrResult);
+            log.info(extractedData.toString());
         } catch (Exception e) {
             if(url != null) {
                 try {
@@ -57,7 +62,8 @@ public class ReimbursementService {
                     log.warn("Failed to delete uploaded cloudinary image", ex);
                 }
             }
-            throw new Exception(e.getMessage());
+            log.error(e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
         return "request raised successfully";
     }
