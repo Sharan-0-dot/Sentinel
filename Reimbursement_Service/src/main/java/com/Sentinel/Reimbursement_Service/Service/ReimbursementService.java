@@ -2,7 +2,7 @@ package com.Sentinel.Reimbursement_Service.Service;
 
 import com.Sentinel.Reimbursement_Service.DTO.ReimbursementRequestDTO;
 import com.Sentinel.Reimbursement_Service.Entity.ReimbursementRequest;
-import com.Sentinel.Reimbursement_Service.Entity.Status;
+import com.Sentinel.Reimbursement_Service.DTO.Status;
 import com.Sentinel.Reimbursement_Service.Repository.ReimbursementRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

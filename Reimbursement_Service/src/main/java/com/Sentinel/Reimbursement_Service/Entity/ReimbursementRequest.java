@@ -1,5 +1,8 @@
 package com.Sentinel.Reimbursement_Service.Entity;
 
+import com.Sentinel.Reimbursement_Service.DTO.FraudLevel;
+import com.Sentinel.Reimbursement_Service.DTO.Payment;
+import com.Sentinel.Reimbursement_Service.DTO.Status;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,7 +26,7 @@ public class ReimbursementRequest {
     @Column(nullable = false)
     private String employeeId;
     @Column(nullable = false)
-    private double amount;
+    private Double amount;
     @Column(nullable = false)
     private LocalDate expenseDate;
     @Column(nullable = false)

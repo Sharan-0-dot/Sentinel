@@ -1,6 +1,5 @@
 package com.Sentinel.Reimbursement_Service.DTO;
 
-import com.Sentinel.Reimbursement_Service.Entity.Payment;
 import lombok.Data;
 
 @Data
