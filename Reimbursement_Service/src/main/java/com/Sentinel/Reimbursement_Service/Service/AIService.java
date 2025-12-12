@@ -4,7 +4,6 @@ import com.Sentinel.Reimbursement_Service.DTO.OCRdata;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +19,6 @@ public class AIService {
     public OCRdata extractOCRData(String ocrResult) {
         String prompt = createPromptForOCR(ocrResult);
         String rawResponse = geminiService.processOCRdata(prompt);
-        log.info(rawResponse);
         return mapOCRdata(rawResponse);
     }
 
@@ -62,23 +60,33 @@ public class AIService {
     private OCRdata mapOCRdata(String rawResponse) throws RuntimeException {
         try {
             ObjectMapper mapper = new ObjectMapper();
+            mapper.registerModule(new JavaTimeModule());
+            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            mapper.configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL, true);
             JsonNode root = mapper.readTree(rawResponse);
 
-            JsonNode textNode = root.path("candidates")
-                    .path(0)
-                    .path("content")
-                    .get("parts")
-                    .get(0)
-                    .get("text");
 
-            if (textNode.isMissingNode()) {
+            JsonNode textNode = root.path("candidates")
+                    .get(0)
+                    .path("content")
+                    .path("parts")
+                    .get(0)
+                    .path("text");
+
+            if (textNode.isMissingNode() || textNode.isNull()) {
                 throw new RuntimeException("Gemini OCR response missing text field");
             }
 
             String jsonText = textNode.asText()
-                    .replaceAll("```json", "")
-                    .replaceAll("```", "")
+                    .replaceAll("```json\\s*", "")
+                    .replaceAll("```\\s*", "")
+                    .replaceAll("^\\s+", "")
+                    .replaceAll("\\s+$", "")
                     .trim();
+
+            if(jsonText.isEmpty()) {
+                throw new RuntimeException("Empty JSON text after extraction");
+            }
 
             return mapper.readValue(jsonText, OCRdata.class);
 

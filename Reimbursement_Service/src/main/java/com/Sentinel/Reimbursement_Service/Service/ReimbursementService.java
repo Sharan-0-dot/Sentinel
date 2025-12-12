@@ -4,6 +4,7 @@ import com.Sentinel.Reimbursement_Service.DTO.OCRdata;
 import com.Sentinel.Reimbursement_Service.DTO.ReimbursementRequestDTO;
 import com.Sentinel.Reimbursement_Service.Entity.ReimbursementRequest;
 import com.Sentinel.Reimbursement_Service.DTO.Status;
+import com.Sentinel.Reimbursement_Service.FraudDetectionEngine.FraudDetectionService;
 import com.Sentinel.Reimbursement_Service.Repository.ReimbursementRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +23,7 @@ public class ReimbursementService {
     private final StorageService storageService;
     private final OCRService ocrService;
     private final AIService aiService;
+    private final FraudDetectionService fraudDetectionService;
 
     @Transactional
     public ReimbursementRequest saveInitialRequest(ReimbursementRequestDTO data, String receiptUrl) {
@@ -53,6 +55,7 @@ public class ReimbursementService {
             System.out.print(ocrResult);
             OCRdata extractedData = aiService.extractOCRData(ocrResult);
             log.info(extractedData.toString());
+            fraudDetectionService.runEngine(extractedData, ocrResult, file);
         } catch (Exception e) {
             if(url != null) {
                 try {

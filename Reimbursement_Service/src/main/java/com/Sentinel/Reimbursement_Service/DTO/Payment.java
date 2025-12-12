@@ -1,5 +1,5 @@
 package com.Sentinel.Reimbursement_Service.DTO;
 
 public enum Payment {
-    UPI, CASH, CARD
+    UPI, CASH, CARD, CREDIT, DEBIT
 }
