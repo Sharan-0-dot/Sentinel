@@ -10,29 +10,22 @@ import java.awt.image.BufferedImage;
 import java.io.InputStream;
 
 @Service
-public class perceptualHashService {
+public class PerceptualHashService {
     private final PerceptiveHash pHash = new PerceptiveHash(64);
 
-    public String generatePhash(MultipartFile file) {
+    public long generatePhash(MultipartFile file) {
         try (InputStream inputStream = file.getInputStream()) {
-
             BufferedImage image = ImageIO.read(inputStream);
-            if (image == null) {
-                throw new RuntimeException("Invalid image or unsupported format");
-            }
-
             Hash hash = pHash.hash(image);
-
-            return hash.getHashValue().toString(16);
-
+            return hash.getHashValue().longValue();
         } catch (Exception e) {
             throw new RuntimeException("Failed to generate perceptual hash", e);
         }
     }
 
-    public int hammingDistance(String hash1, String hash2) {
-        long h1 = Long.parseUnsignedLong(hash1, 16);
-        long h2 = Long.parseUnsignedLong(hash2, 16);
+
+    public int hammingDistance(long h1, long h2) {
         return Long.bitCount(h1 ^ h2);
     }
+
 }

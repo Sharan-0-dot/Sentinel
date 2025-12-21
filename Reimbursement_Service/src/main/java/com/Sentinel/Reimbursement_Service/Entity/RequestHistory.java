@@ -33,8 +33,11 @@ public class RequestHistory {
     private Double amount;
     @Column(nullable = false)
     private LocalDate expenseDate;
-    private String imagePhash;
-    private String textHash;
+
+    @Column(nullable = false)
+    private long imagePhash;
+    @Column(nullable = false)
+    private long textHash;
 
     @Column(nullable = false)
     private String reimbursementRequestId;

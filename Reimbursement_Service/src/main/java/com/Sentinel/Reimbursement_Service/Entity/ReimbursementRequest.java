@@ -39,13 +39,10 @@ public class ReimbursementRequest {
     private String receiptURL;
     private String ocrData;
     private int fraudScore;
-
     @Enumerated(EnumType.STRING)
     private FraudLevel fraudLevel;
-
     @Enumerated(EnumType.STRING)
     private Status status;
-
     @CreationTimestamp
     private LocalDateTime createdAt;
     @CreationTimestamp

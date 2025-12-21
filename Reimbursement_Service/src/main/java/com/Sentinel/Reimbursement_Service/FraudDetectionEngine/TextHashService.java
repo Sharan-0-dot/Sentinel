@@ -3,7 +3,7 @@ package com.Sentinel.Reimbursement_Service.FraudDetectionEngine;
 import org.springframework.stereotype.Service;
 
 @Service
-public class textHashService {
+public class TextHashService {
 
     private static final int HASH_BITS = 64;
 
