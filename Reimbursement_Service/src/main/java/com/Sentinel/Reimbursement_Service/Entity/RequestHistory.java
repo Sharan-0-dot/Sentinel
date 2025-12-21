@@ -15,10 +15,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(indexes = {
-        @Index(name = "idx_rh_vendor", columnList = "vendorName"),
-        @Index(name = "idx_rh_invoice", columnList = "invoiceNumber"),
+        @Index(name = "idx_rh_vendor_date", columnList = "vendorName, expenseDate"),
+        @Index(name = "idx_rh_vendor_date_amount", columnList = "vendorName, expenseDate, amount"),
+        @Index(name = "idx_rh_emp_date", columnList = "employeeId, expenseDate"),
         @Index(name = "idx_rh_phash", columnList = "imagePhash"),
-        @Index(name = "idx_rh_thash", columnList = "textHash"),
+        @Index(name = "idx_rh_hash", columnList = "textHash"),
         @Index(name = "idx_rh_requestId", columnList = "reimbursementRequestId")
 })
 public class RequestHistory {
@@ -26,6 +27,10 @@ public class RequestHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
+
+    @Column(nullable = false)
+    private String employeeId;
+
     private String invoiceNumber;
     @Column(nullable = false)
     private String vendorName;

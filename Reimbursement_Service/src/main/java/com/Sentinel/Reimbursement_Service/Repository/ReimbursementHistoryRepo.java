@@ -18,4 +18,6 @@ public interface ReimbursementHistoryRepo extends JpaRepository<RequestHistory, 
 
     @Query("SELECT r.textHash FROM RequestHistory r")
     List<Long> findAllTextHashes();
+
+    List<RequestHistory> findByEmployeeIdAndExpenseDate(String employeeId, LocalDate expenseDate);
 }

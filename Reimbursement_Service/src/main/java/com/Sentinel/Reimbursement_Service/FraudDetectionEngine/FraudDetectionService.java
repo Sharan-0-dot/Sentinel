@@ -2,7 +2,9 @@ package com.Sentinel.Reimbursement_Service.FraudDetectionEngine;
 
 import com.Sentinel.Reimbursement_Service.DTO.OCRdata;
 import com.Sentinel.Reimbursement_Service.Entity.ReimbursementRequest;
+import com.Sentinel.Reimbursement_Service.Entity.RequestHistory;
 import com.Sentinel.Reimbursement_Service.Repository.ReimbursementHistoryRepo;
+import com.Sentinel.Reimbursement_Service.Service.EmployeePolicyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,6 +16,7 @@ public class FraudDetectionService {
     private final PerceptualHashService pHashService;
     private final TextHashService textHashService;
     private final ReimbursementHistoryRepo historyRepo;
+    private final EmployeePolicyService policyService;
 
     public int runEngine(ReimbursementRequest originalRequest, OCRdata extractedData, String ocrResult, MultipartFile file) {
         int fraudScore = 0;
@@ -22,6 +25,7 @@ public class FraudDetectionService {
         fraudScore += verifyAcrossHistory(originalRequest);
         fraudScore += matchingPhash(file);
         fraudScore += matchingTextHash(ocrResult);
+        // fraudScore += checkPolicyViolation(originalRequest);
 
         return fraudScore;
     }
@@ -89,6 +93,22 @@ public class FraudDetectionService {
         }
         if(best <= 5) return 20;
         else if (best <= 10) return 10;
+        return 0;
+    }
+
+    // max 25
+    public int checkPolicyViolation(ReimbursementRequest request) {
+        String policyNumber = policyService.getUserPolicy(request.getEmployeeId());
+        Double limit = policyService.getPolicyLimit(policyNumber);
+        double curSpending = 0;
+        for(RequestHistory history : historyRepo.findByEmployeeIdAndExpenseDate(request.getEmployeeId(), request.getExpenseDate())) {
+            curSpending += history.getAmount();
+        }
+        curSpending += request.getAmount();
+
+        if(curSpending > limit) {
+            return 25;
+        }
         return 0;
     }
 }

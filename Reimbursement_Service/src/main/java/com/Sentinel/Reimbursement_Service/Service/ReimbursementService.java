@@ -90,6 +90,7 @@ public class ReimbursementService {
     private void saveToHistory(ReimbursementRequest request, OCRdata extracted, String ocrResult, MultipartFile file) {
         RequestHistory history = new RequestHistory();
         history.setReimbursementRequestId(request.getId());
+        history.setEmployeeId(request.getEmployeeId());
         history.setAmount(request.getAmount());
         history.setExpenseDate(request.getExpenseDate());
         history.setVendorName(request.getVendorName());
