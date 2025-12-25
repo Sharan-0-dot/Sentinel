@@ -25,24 +25,40 @@ public class ReimbursementRequest {
 
     @Column(nullable = false)
     private String employeeId;
+
     @Column(nullable = false)
     private Double amount;
+
     @Column(nullable = false)
     private LocalDate expenseDate;
+
     @Column(nullable = false)
     private String vendorName;
+
     @Column(nullable = false)
     private String category;
+
     private String description;
+
     @Enumerated(EnumType.STRING)
     private Payment paymentMode;
+
     private String receiptURL;
+
+    @Column(columnDefinition = "TEXT")
     private String ocrData;
+
     private int fraudScore;
+
     @Enumerated(EnumType.STRING)
     private FraudLevel fraudLevel;
+
     @Enumerated(EnumType.STRING)
     private Status status;
+
+    @Column(columnDefinition = "TEXT")
+    private String fraudDescription;
+
     @CreationTimestamp
     private LocalDateTime createdAt;
     @CreationTimestamp

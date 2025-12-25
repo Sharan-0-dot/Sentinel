@@ -1,6 +1,7 @@
 package com.Sentinel.Reimbursement_Service.FraudDetectionEngine;
 
 import com.Sentinel.Reimbursement_Service.DTO.OCRdata;
+import com.Sentinel.Reimbursement_Service.DTO.ResponseDTO;
 import com.Sentinel.Reimbursement_Service.Entity.ReimbursementRequest;
 import com.Sentinel.Reimbursement_Service.Entity.RequestHistory;
 import com.Sentinel.Reimbursement_Service.Repository.ReimbursementHistoryRepo;
@@ -18,72 +19,84 @@ public class FraudDetectionService {
     private final ReimbursementHistoryRepo historyRepo;
     private final EmployeePolicyService policyService;
 
-    public int runEngine(ReimbursementRequest originalRequest, OCRdata extractedData, String ocrResult, MultipartFile file) {
-        int fraudScore = 0;
+    public ResponseDTO runEngine(ReimbursementRequest originalRequest, OCRdata extractedData, String ocrResult, MultipartFile file) {
+        ResponseDTO response = new ResponseDTO();
 
-        fraudScore += validate(originalRequest, extractedData);
-        fraudScore += verifyAcrossHistory(originalRequest);
-        fraudScore += matchingPhash(file);
-        fraudScore += matchingTextHash(ocrResult);
-        // fraudScore += checkPolicyViolation(originalRequest);
+        validate(originalRequest, extractedData, response);
+        verifyAcrossHistory(originalRequest, response);
+        matchingPhash(file, response);
+        matchingTextHash(ocrResult, response);
+        //checkPolicyViolation(originalRequest, response);
 
-        return fraudScore;
+        return response;
     }
 
     // max 20
-    public int validate(ReimbursementRequest original, OCRdata ocr) {
-        int score = 0;
+    public void validate(ReimbursementRequest original, OCRdata ocr, ResponseDTO response) {
 
         if (ocr.getAmount() != null) {
             double diff = Math.abs(ocr.getAmount() - original.getAmount())
                     / original.getAmount();
 
-            if (diff > 0.05) score += 7;
-            else if (diff > 0.02) score += 6;
+            if (diff > 0.05) {
+                response.addScore(7);
+                response.addReason("Amount mismatch");
+            }
+            else if (diff > 0.02) {
+                response.addScore(6);
+                response.addReason("Minor amount mismatch");
+            }
         }
 
-        if (ocr.getVendorName() != null &&
-                !ocr.getVendorName().equalsIgnoreCase(original.getVendorName())) {
-            score += 6;
+        if (ocr.getVendorName() != null && !ocr.getVendorName().equalsIgnoreCase(original.getVendorName())) {
+            response.addScore(6);
+            response.addReason("Vendor name mismatch");
         }
 
-        if (ocr.getExpenseDate() != null &&
-                Math.abs(ocr.getExpenseDate().toEpochDay() -
-                        original.getExpenseDate().toEpochDay()) > 1) {
-            score += 7;
+        if (ocr.getExpenseDate() != null && Math.abs(ocr.getExpenseDate().toEpochDay() - original.getExpenseDate().toEpochDay()) > 1) {
+            response.addScore(7);
+            response.addReason("Expense date mismatch");
         }
-
-        return score;
     }
 
     // max 35
-    public int verifyAcrossHistory(ReimbursementRequest originalRequest) {
+    public void verifyAcrossHistory(ReimbursementRequest originalRequest, ResponseDTO response) {
         boolean sameVendorDate =
                 historyRepo.existsByVendorNameAndExpenseDate(originalRequest.getVendorName(), originalRequest.getExpenseDate());
 
         boolean sameVendorDateAmount =
                 historyRepo.existsByVendorNameAndExpenseDateAndAmount(originalRequest.getVendorName(), originalRequest.getExpenseDate(), originalRequest.getAmount());
 
-        if (sameVendorDateAmount) return 35;
-        else if (sameVendorDate) return 25;
-        return 0;
+        if (sameVendorDateAmount) {
+            response.addScore(35);
+            response.addReason("Duplicate invoice detected");
+        }
+        else if (sameVendorDate) {
+            response.addScore(25);
+            response.addReason("Same Vendor & date detected");
+        }
     }
 
     // max 25
-    public int matchingPhash(MultipartFile file) {
+    public void matchingPhash(MultipartFile file, ResponseDTO response) {
         long newHash = pHashService.generatePhash(file);
         int best = Integer.MAX_VALUE;
         for (Long oldHash : historyRepo.findAllImagePhashes()) {
             int distance = pHashService.hammingDistance(newHash, oldHash);
             best = Math.min(distance, best);
         }
-        if(best <= 5) return 25;
-        else if(best <= 10) return 15;
-        return 0;
+        if(best <= 5) {
+            response.addScore(25);
+            response.addReason("Duplicate receipt image");
+        }
+        else if(best <= 10) {
+            response.addScore(15);
+            response.addReason("Similar receipt image");
+        }
     }
 
     // max 20
-    public int matchingTextHash(String ocrResult) {
+    public void matchingTextHash(String ocrResult, ResponseDTO response) {
         int best = Integer.MAX_VALUE;
         long newHash = textHashService.generateHash(ocrResult);
 
@@ -91,13 +104,18 @@ public class FraudDetectionService {
             int distance = textHashService.hammingDistance(newHash, oldHash);
             best = Math.min(best, distance);
         }
-        if(best <= 5) return 20;
-        else if (best <= 10) return 10;
-        return 0;
+        if(best <= 5) {
+            response.addScore(20);
+            response.addReason("Duplicate invoice text");
+        }
+        else if (best <= 10) {
+            response.addScore(10);
+            response.addReason("Similar invoice text");
+        }
     }
 
     // max 25
-    public int checkPolicyViolation(ReimbursementRequest request) {
+    public void checkPolicyViolation(ReimbursementRequest request, ResponseDTO response) {
         String policyNumber = policyService.getUserPolicy(request.getEmployeeId());
         Double limit = policyService.getPolicyLimit(policyNumber);
         double curSpending = 0;
@@ -107,8 +125,8 @@ public class FraudDetectionService {
         curSpending += request.getAmount();
 
         if(curSpending > limit) {
-            return 25;
+            response.addScore(25);
+            response.addReason("Policy limit exceeded");
         }
-        return 0;
     }
 }

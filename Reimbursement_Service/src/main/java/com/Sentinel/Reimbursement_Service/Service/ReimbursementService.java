@@ -1,10 +1,7 @@
 package com.Sentinel.Reimbursement_Service.Service;
 
-import com.Sentinel.Reimbursement_Service.DTO.FraudLevel;
-import com.Sentinel.Reimbursement_Service.DTO.OCRdata;
-import com.Sentinel.Reimbursement_Service.DTO.ReimbursementRequestDTO;
+import com.Sentinel.Reimbursement_Service.DTO.*;
 import com.Sentinel.Reimbursement_Service.Entity.ReimbursementRequest;
-import com.Sentinel.Reimbursement_Service.DTO.Status;
 import com.Sentinel.Reimbursement_Service.Entity.RequestHistory;
 import com.Sentinel.Reimbursement_Service.FraudDetectionEngine.FraudDetectionService;
 import com.Sentinel.Reimbursement_Service.FraudDetectionEngine.PerceptualHashService;
@@ -63,15 +60,17 @@ public class ReimbursementService {
             System.out.print(ocrResult);
             OCRdata extractedData = aiService.extractOCRData(ocrResult);
             log.info(extractedData.toString());
-            int fraudPoints = fraudDetectionService.runEngine(request, extractedData, ocrResult, file);
-            FraudLevel level = resolveFraudLevel(fraudPoints);
-            request.setFraudScore(fraudPoints);
+            ResponseDTO response = fraudDetectionService.runEngine(request, extractedData, ocrResult, file);
+            FraudLevel level = resolveFraudLevel(response.getFraudScore());
+            request.setFraudScore(response.getFraudScore());
             request.setFraudLevel(level);
             request.setStatus(Status.COMPLETED);
+            request.setFraudDescription(response.getFinalDescription());
             repo.save(request);
             if(level.equals(FraudLevel.LOW) || level.equals(FraudLevel.MEDIUM)) {
                 saveToHistory(request, extractedData, ocrResult, file);
             }
+            return "fraudLevel : " + request.getFraudLevel() + " " + request.getFraudDescription();
         } catch (Exception e) {
             if(url != null) {
                 try {
@@ -84,7 +83,6 @@ public class ReimbursementService {
             log.error(e.getMessage());
             throw new RuntimeException(e.getMessage());
         }
-        return "request raised successfully";
     }
 
     private void saveToHistory(ReimbursementRequest request, OCRdata extracted, String ocrResult, MultipartFile file) {
@@ -102,8 +100,8 @@ public class ReimbursementService {
 
     private FraudLevel resolveFraudLevel(int fraudPoints) {
         if(fraudPoints < 30) return FraudLevel.LOW;
-        if(fraudPoints >= 30 && fraudPoints < 60) return FraudLevel.MEDIUM;
-        if(fraudPoints >= 60 && fraudPoints < 85) return FraudLevel.HIGH;
+        if(fraudPoints < 60) return FraudLevel.MEDIUM;
+        if(fraudPoints < 85) return FraudLevel.HIGH;
         return FraudLevel.CONFIRMED;
     }
 }
