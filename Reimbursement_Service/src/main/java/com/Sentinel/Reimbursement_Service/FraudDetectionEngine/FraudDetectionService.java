@@ -34,7 +34,7 @@ public class FraudDetectionService {
     // max 20
     public void validate(ReimbursementRequest original, OCRdata ocr, ResponseDTO response) {
 
-        if (ocr.getAmount() != null) {
+        if (ocr.getAmount() != null && ocr.getAmount() != 0) {
             double diff = Math.abs(ocr.getAmount() - original.getAmount())
                     / original.getAmount();
 
