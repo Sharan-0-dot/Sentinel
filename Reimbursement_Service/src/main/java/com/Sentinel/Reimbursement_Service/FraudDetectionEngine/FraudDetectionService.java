@@ -116,8 +116,7 @@ public class FraudDetectionService {
 
     // max 25
     public void checkPolicyViolation(ReimbursementRequest request, ResponseDTO response) {
-        String policyNumber = policyService.getUserPolicy(request.getEmployeeId());
-        Double limit = policyService.getPolicyLimit(policyNumber);
+        Double limit = policyService.getPolicyLimitOfUser(request.getEmployeeId());
         double curSpending = 0;
         for(RequestHistory history : historyRepo.findByEmployeeIdAndExpenseDate(request.getEmployeeId(), request.getExpenseDate())) {
             curSpending += history.getAmount();

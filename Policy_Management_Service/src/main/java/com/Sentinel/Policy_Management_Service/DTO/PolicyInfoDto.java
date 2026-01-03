@@ -7,10 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class EmployeeDTO {
-
-    private String id;
-    private String name;
-    private Role role;
-
+public class PolicyInfoDto {
+    private String employeeId;
+    private Double policyLimit;
 }

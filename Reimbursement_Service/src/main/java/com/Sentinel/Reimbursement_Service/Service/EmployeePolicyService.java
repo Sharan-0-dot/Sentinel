@@ -5,11 +5,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class EmployeePolicyService {
 
-    public String getUserPolicy(String employeeId) {
-        return "";
-    }
-
-    public Double getPolicyLimit(String policyNumber) {
+    public Double getPolicyLimitOfUser(String policyNumber) {
         return 0.0;
     }
 }

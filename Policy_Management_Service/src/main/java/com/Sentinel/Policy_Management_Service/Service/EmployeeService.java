@@ -13,12 +13,14 @@ import org.springframework.stereotype.Service;
 public class EmployeeService {
 
     private final EmployeeRepo employeeRepo;
+    private final RolePolicyService rolePolicyService;
 
     public EmployeeDTO createEmployee(EmployeeDTO employeeDTO) {
         try {
             Employee employee = Employee.builder()
                     .name(employeeDTO.getName())
                     .role(employeeDTO.getRole())
+                    .policyNumber(rolePolicyService.resolvePolicyForRole(employeeDTO.getRole()))
                     .build();
             employeeRepo.save(employee);
             return employeeDTO;
@@ -40,15 +42,15 @@ public class EmployeeService {
 
     public EmployeeDTO updateEmployee(EmployeeDTO employeeDTO) {
         try {
-            Employee allreadySaved = employeeRepo.findById(employeeDTO.getId()).orElse(null);
-            if(allreadySaved == null) {
+            Employee alreadySaved = employeeRepo.findById(employeeDTO.getId()).orElse(null);
+            if(alreadySaved == null) {
                 throw new Exception("no Employee exists by this id");
             }
             if(employeeDTO.getName() != null && employeeDTO.getRole() != null) {
-                allreadySaved.setName(employeeDTO.getName());
-                allreadySaved.setRole(employeeDTO.getRole());
+                alreadySaved.setName(employeeDTO.getName());
+                alreadySaved.setRole(employeeDTO.getRole());
             }
-            employeeRepo.save(allreadySaved);
+            employeeRepo.save(alreadySaved);
             return employeeDTO;
         } catch (Exception e) {
             log.error(e.getMessage());
