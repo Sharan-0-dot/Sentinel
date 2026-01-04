@@ -22,7 +22,8 @@ public class EmployeeService {
                     .role(employeeDTO.getRole())
                     .policyNumber(rolePolicyService.resolvePolicyForRole(employeeDTO.getRole()))
                     .build();
-            employeeRepo.save(employee);
+            Employee saved = employeeRepo.save(employee);
+            employeeDTO.setId(saved.getId());
             return employeeDTO;
         } catch (Exception e) {
             log.error(e.getMessage());

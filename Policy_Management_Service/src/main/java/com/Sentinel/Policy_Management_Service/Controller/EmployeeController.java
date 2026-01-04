@@ -35,7 +35,7 @@ public class EmployeeController {
         return new ResponseEntity<>("update successfull " + updated.toString(), HttpStatus.OK);
     }
 
-    @DeleteMapping("/")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteEmployee(@PathVariable String id) {
         String res = service.deleteEmployeeById(id);
         if(res == null) {
@@ -44,8 +44,8 @@ public class EmployeeController {
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
-    @GetMapping("/policy_limit")
-    public ResponseEntity<?> getPolicyLimitOfUser(PolicyInfoDto infoDto) {
+    @PostMapping("/policy_limit")
+    public ResponseEntity<?> getPolicyLimitOfUser(@RequestBody PolicyInfoDto infoDto) {
         try {
             PolicyInfoDto response = policyService.getUserLimit(infoDto);
             return new ResponseEntity<>(response, HttpStatus.OK);

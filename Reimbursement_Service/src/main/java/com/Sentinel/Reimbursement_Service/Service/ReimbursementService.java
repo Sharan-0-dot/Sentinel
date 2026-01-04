@@ -56,6 +56,7 @@ public class ReimbursementService {
             log.info("initial request saved");
             String options = "{\"languages\": [\"eng\"]}";
             String ocrResult = ocrService.extractText(file, options);
+            request.setOcrData(ocrResult);
             log.info("ocr result received");
             System.out.print(ocrResult);
             OCRdata extractedData = aiService.extractOCRData(ocrResult);
@@ -99,9 +100,9 @@ public class ReimbursementService {
     }
 
     private FraudLevel resolveFraudLevel(int fraudPoints) {
-        if(fraudPoints < 30) return FraudLevel.LOW;
-        if(fraudPoints < 60) return FraudLevel.MEDIUM;
-        if(fraudPoints < 85) return FraudLevel.HIGH;
+        if(fraudPoints < 25) return FraudLevel.LOW;
+        if(fraudPoints < 50) return FraudLevel.MEDIUM;
+        if(fraudPoints < 75) return FraudLevel.HIGH;
         return FraudLevel.CONFIRMED;
     }
 }

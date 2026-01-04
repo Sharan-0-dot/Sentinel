@@ -21,7 +21,6 @@ public class Policy {
     private String id;
 
     @Column(unique = true, nullable = false)
-    private String policyNumber;
     private String policyName;
 
     @Column(nullable = false)

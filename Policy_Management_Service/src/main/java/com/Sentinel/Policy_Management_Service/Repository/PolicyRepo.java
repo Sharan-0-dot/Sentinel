@@ -8,5 +8,6 @@ import java.util.Optional;
 
 @Repository
 public interface PolicyRepo extends JpaRepository<Policy, String> {
-    Optional<Policy> findByPolicyNumber(String policyNumber);
+    boolean existsByPolicyName(String policyName);
+    Optional<Policy> findByPolicyName(String policyName);
 }

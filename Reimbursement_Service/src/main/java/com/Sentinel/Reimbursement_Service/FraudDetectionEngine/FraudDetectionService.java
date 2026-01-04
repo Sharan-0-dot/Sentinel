@@ -26,7 +26,7 @@ public class FraudDetectionService {
         verifyAcrossHistory(originalRequest, response);
         matchingPhash(file, response);
         matchingTextHash(ocrResult, response);
-        //checkPolicyViolation(originalRequest, response);
+        checkPolicyViolation(originalRequest, response);
 
         return response;
     }

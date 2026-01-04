@@ -10,4 +10,8 @@ import java.util.Optional;
 @Repository
 public interface RolePolicyRepo extends JpaRepository<RolePolicyMapping, String> {
     Optional<RolePolicyMapping> findByRole(Role role);
+    Optional<RolePolicyMapping> findByPolicyNumber(String policyNumber);
+
+    boolean existsByRole(Role role);
+    void deleteByPolicyNumber(String policyNumber);
 }
