@@ -1,0 +1,11 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/Sentinel
+    username: ${DATABASE_NAME}
+    password: ${DATABASE_PASS}
+
+ocrBaseUrl: "http://localhost:8884/tesseract"
+
+policy:
+  service:
+    base-url: http://localhost:8081/employee/policy_limit

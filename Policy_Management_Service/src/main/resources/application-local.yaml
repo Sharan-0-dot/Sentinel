@@ -1,0 +1,8 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/Sentinel
+    username: ${DATABASE_NAME}
+    password: ${DATABASE_PASS}
+
+server:
+  port: ${SERVER_PORT}

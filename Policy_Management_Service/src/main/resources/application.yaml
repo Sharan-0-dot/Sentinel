@@ -2,15 +2,7 @@ spring:
   application:
     name: Policy_Management_Service
 
-  datasource:
-    url: jdbc:postgresql://localhost:5432/Sentinel
-    username: postgres
-    password: Sharan@2005
-
   jpa:
     hibernate:
       ddl-auto: update
     database-platform: org.hibernate.dialect.PostgreSQLDialect
-
-server:
-  port: 8081
