@@ -1,18 +1,17 @@
-
 # Sentinel – Reimbursement Fraud Detection System
 
-Sentinel is a backend system built to process employee reimbursement claims and detect fraudulent submissions. The project focuses on real-world reimbursement workflows such as receipt validation, duplicate detection, policy enforcement, and fraud scoring.
+Sentinel is a backend system designed to process employee reimbursement claims and detect fraudulent submissions. The project models real-world reimbursement workflows such as receipt validation, duplicate detection, policy enforcement, and fraud scoring using a microservices architecture.
 
-The system is designed using a microservices approach and emphasizes clean service boundaries, data integrity, and practical fraud detection techniques.
+The system focuses on backend correctness, service isolation, and production-style deployment practices.
 
 ---
 
-## What the system does
+## What the System Does
 
-* Accepts reimbursement requests along with receipt images
+* Accepts reimbursement requests with structured claim data and receipt images
 * Extracts text from receipts using OCR
-* Validates submitted claim data against extracted receipt data
-* Detects duplicate or reused receipts using historical data
+* Validates submitted claim data against OCR-extracted receipt information
+* Detects duplicate or reused receipts using historical records
 * Enforces employee-specific reimbursement policies
 * Assigns a fraud score and categorizes each request by risk level
 
@@ -20,7 +19,7 @@ The system is designed using a microservices approach and emphasizes clean servi
 
 ## Architecture Overview
 
-The project consists of two Spring Boot microservices:
+Sentinel is built using two independent Spring Boot microservices with clear service boundaries.
 
 ### Reimbursement Service
 
@@ -28,9 +27,9 @@ This is the core service responsible for:
 
 * Receiving reimbursement requests (JSON + receipt image)
 * Uploading receipt images to cloud storage
-* Running OCR and extracting invoice details
-* Executing fraud detection logic
-* Managing request status and fraud results
+* Running OCR on receipts using Tesseract
+* Executing fraud detection and scoring logic
+* Managing reimbursement request lifecycle and results
 
 ### Employee Policy Management Service
 
@@ -38,23 +37,23 @@ This service handles:
 
 * Employee creation and management
 * Policy assignment and reimbursement limits
-* Providing policy information to the reimbursement service during fraud checks
+* Exposing policy data to the reimbursement service during fraud checks
 
 ---
 
 ## Fraud Detection Logic
 
-Fraud detection is implemented as a scoring engine where multiple checks contribute to a final fraud score.
+Fraud detection is implemented as a scoring engine where multiple independent checks contribute to a final fraud score.
 
 The engine performs:
 
 * Validation between submitted claim data and OCR-extracted receipt data (amount, vendor, date)
-* Duplicate detection using historical reimbursement records
-* Image similarity checks using perceptual hashing (pHash)
+* Duplicate receipt detection using historical reimbursement data
+* Image similarity detection using perceptual hashing (pHash)
 * Text similarity checks on OCR output
-* Policy limit validation based on employee reimbursement limits
+* Policy limit validation based on employee-specific reimbursement rules
 
-Each check adds points to the overall fraud score, which is then mapped to a fraud level.
+Each check contributes weighted points to the overall fraud score, which is mapped to a fraud risk level.
 
 ---
 
@@ -65,7 +64,7 @@ Each check adds points to the overall fraud score, which is then mapped to a fra
 * **HIGH** – Likely fraud
 * **CONFIRMED** – Strong fraud indicators detected
 
-Only low and medium risk requests are stored for future historical comparisons.
+Only **LOW** and **MEDIUM** risk requests are persisted for future historical comparisons.
 
 ---
 
@@ -75,9 +74,9 @@ Only low and medium risk requests are stored for future historical comparisons.
 2. The receipt image is uploaded to cloud storage
 3. OCR extracts raw text from the receipt
 4. Extracted data is validated against submitted claim data
-5. Fraud detection engine runs all validation and similarity checks
+5. The fraud detection engine runs all validation and similarity checks
 6. A fraud score and fraud level are assigned
-7. Request status is updated and stored in the database
+7. Request status and results are stored in the database
 
 ---
 
@@ -90,10 +89,28 @@ Only low and medium risk requests are stored for future historical comparisons.
 * Tesseract OCR (Docker container)
 * REST APIs
 * Docker
+* Kubernetes (Minikube)
 
 ---
 
-## Project Structure (High Level)
+## Deployment Status
+
+The system has been **successfully deployed and tested on a local Kubernetes cluster using Minikube**.
+
+Deployment characteristics:
+
+* Each microservice runs in its own Kubernetes Deployment
+* Internal service-to-service communication via ClusterIP services
+* External access via NodePort with port-forwarding
+* Configuration managed using ConfigMaps and Secrets
+* Secure database connectivity using mounted SSL certificates
+* Tesseract OCR runs as a separate containerized service
+
+This deployment closely mirrors real-world cloud-native production setups.
+
+---
+
+## Project Structure
 
 ```
 Sentinel
@@ -116,18 +133,18 @@ Sentinel
 
 ---
 
-## Running the Project Locally
+## Running the Project Locally (Non-Kubernetes)
 
-Requirements:
+### Requirements
 
 * Java 17+
 * PostgreSQL
 * Docker (for OCR service)
 * Maven
 
-Steps:
+### Steps
 
-1. Start PostgreSQL and configure database properties
+1. Start PostgreSQL and configure database credentials
 2. Run the Tesseract OCR Docker container
 3. Start the Employee Policy Management Service
 4. Start the Reimbursement Service
@@ -137,13 +154,17 @@ Steps:
 
 ## Planned Improvements
 
-* Docker Compose setup for running all services together
-* Kubernetes deployment
+* Kubernetes Ingress configuration
 * Asynchronous fraud processing
-* Admin dashboard for monitoring fraud cases
+* Admin dashboard for fraud monitoring and analytics
+* Improved fraud scoring tunability
 
 ---
 
 ## Notes
 
-This project was built to simulate a real reimbursement fraud detection system, focusing on backend logic, data validation, and system design rather than UI. It is designed as a production-ready service and can be directly integrated into real organizational reimbursement workflows.
+Sentinel was built to simulate a **real-world reimbursement fraud detection backend**, focusing on backend architecture, data validation, and deployment correctness rather than UI.
+
+The system is designed to be production-ready and can be directly extended or integrated into enterprise reimbursement workflows.
+
+---
