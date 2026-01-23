@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: policy-management
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: policy-management
+  template:
+    metadata:
+      labels:
+        app: policy-management
+    spec:
+      containers:
+        - name: policy-management
+          image: sharansc/policy-management-service
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: docker
+
+            - name: SERVER_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: sentinel-config
+                  key: SERVER_PORT
+
+            - name: DATABASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: sentinel-config
+                  key: DATABASE_URL
+
+            - name: DATABASE_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: sentinel-config
+                  key: DATABASE_NAME
+
+            - name: DATABASE_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: sentinel-secret
+                  key: DATABASE_PASS
+          volumeMounts:
+            - name: db-ca-cert
+              mountPath: /etc/ssl/certs/ca.pem
+              subPath: ca.pem
+              readOnly: true
+
+      volumes:
+        - name: db-ca-cert
+          configMap:
+            name: db-ca-cert
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: policy-management-service
+spec:
+  type: NodePort
+  selector:
+    app: policy-management
+  ports:
+    - port: 8080
+      targetPort: 8080
+      nodePort: 30001

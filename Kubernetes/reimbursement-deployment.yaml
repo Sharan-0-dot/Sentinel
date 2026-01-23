@@ -1,0 +1,107 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reimbursement
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: reimbursement
+  template:
+    metadata:
+      labels:
+        app: reimbursement
+    spec:
+      containers:
+        - name: reimbursement
+          image: sharansc/reimbursement-service
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: docker
+
+            - name: DATABASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: sentinel-config
+                  key: DATABASE_URL
+
+            - name: DATABASE_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: sentinel-config
+                  key: DATABASE_NAME
+
+            - name: DATABASE_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: sentinel-secret
+                  key: DATABASE_PASS
+
+            - name: CLOUDINARY_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: sentinel-secret
+                  key: CLOUDINARY_NAME
+
+            - name: CLOUDINARY_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: sentinel-secret
+                  key: CLOUDINARY_KEY
+
+            - name: CLOUDINARY_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: sentinel-secret
+                  key: CLOUDINARY_SECRET
+
+            - name: GEMINI_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: sentinel-config
+                  key: GEMINI_URL
+
+            - name: GEMINI_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: sentinel-secret
+                  key: GEMINI_KEY
+
+            - name: OCR_BASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: sentinel-config
+                  key: OCR_BASE_URL
+
+            - name: POLICY_SERVICE_BASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: sentinel-config
+                  key: POLICY_SERVICE_BASE_URL
+
+          volumeMounts:
+            - name: db-ca-cert
+              mountPath: /etc/ssl/certs/ca.pem
+              subPath: ca.pem
+              readOnly: true
+
+      volumes:
+        - name: db-ca-cert
+          configMap:
+            name: db-ca-cert
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: reimbursement-service
+spec:
+  type: NodePort
+  selector:
+    app: reimbursement
+  ports:
+    - port: 8080
+      targetPort: 8080
+      nodePort: 30002

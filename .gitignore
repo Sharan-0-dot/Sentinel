@@ -4,3 +4,11 @@
 # Docker
 docker-compose.yaml
 .env
+
+# Kubernetes - sensitive
+
+ca.pem
+kubernetes/ca.pem
+
+kubernetes/configmap.yaml
+kubernetes/secret.yaml

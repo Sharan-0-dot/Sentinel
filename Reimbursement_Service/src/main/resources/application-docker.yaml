@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://postgres:5432/Sentinel
+    url: ${DATABASE_URL}
     username: ${DATABASE_NAME}
     password: ${DATABASE_PASS}
 
