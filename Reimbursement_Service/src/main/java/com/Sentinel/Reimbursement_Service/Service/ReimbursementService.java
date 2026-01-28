@@ -15,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -104,5 +106,26 @@ public class ReimbursementService {
         if(fraudPoints < 50) return FraudLevel.MEDIUM;
         if(fraudPoints < 75) return FraudLevel.HIGH;
         return FraudLevel.CONFIRMED;
+    }
+
+    public List<AdminReimbursementDTO> getAllRequests() {
+        List<ReimbursementRequest> list = repo.findAll();
+        List<AdminReimbursementDTO> result = new ArrayList<>();
+        for(ReimbursementRequest stored : list) {
+            AdminReimbursementDTO cur = new AdminReimbursementDTO();
+            cur.setId(stored.getId());
+            cur.setAmount(stored.getAmount());
+            cur.setCategory(stored.getCategory());
+            cur.setStatus(stored.getStatus());
+            cur.setEmployeeId(stored.getEmployeeId());
+            cur.setExpenseDate(stored.getExpenseDate());
+            cur.setVendorName(stored.getVendorName());
+            cur.setFraudLevel(stored.getFraudLevel());
+            cur.setFraudScore(stored.getFraudScore());
+            cur.setCreatedAt(stored.getCreatedAt());
+            cur.setDescription(stored.getFraudDescription());
+            result.add(cur);
+        }
+        return result;
     }
 }

@@ -7,6 +7,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -57,6 +60,18 @@ public class EmployeeService {
             log.error(e.getMessage());
             return null;
         }
+    }
+
+    public List<EmployeeDTO> getAllEmployee() {
+        List<EmployeeDTO> result = new ArrayList<>();
+        for(Employee employee : employeeRepo.findAll()) {
+            EmployeeDTO dto = new EmployeeDTO();
+            dto.setId(employee.getId());
+            dto.setName(employee.getName());
+            dto.setRole(employee.getRole());
+            result.add(dto);
+        }
+        return result;
     }
 
 

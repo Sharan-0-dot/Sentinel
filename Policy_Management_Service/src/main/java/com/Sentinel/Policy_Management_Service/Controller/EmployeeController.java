@@ -17,6 +17,11 @@ public class EmployeeController {
     private final EmployeeService service;
     private final PolicyService policyService;
 
+    @GetMapping("/")
+    public ResponseEntity<?> getAllEmployee() {
+        return new ResponseEntity<>(service.getAllEmployee(), HttpStatus.OK);
+    }
+
     @PostMapping("/")
     public ResponseEntity<?> createEmployee(@RequestBody EmployeeDTO employeeDTO) {
         EmployeeDTO created = service.createEmployee(employeeDTO);

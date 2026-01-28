@@ -14,6 +14,15 @@ public class PolicyController {
 
     private final PolicyService service;
 
+    @GetMapping("/")
+    public ResponseEntity<?> getAllPolicies() {
+        try {
+            return new ResponseEntity<>(service.getAllPolicies(), HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(e.getLocalizedMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @PostMapping("/")
     public ResponseEntity<?> postPolicy(@RequestBody PolicyDTO policyDTO) {
         try {

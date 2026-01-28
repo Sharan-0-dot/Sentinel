@@ -11,6 +11,9 @@ import com.Sentinel.Policy_Management_Service.Repository.RolePolicyRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class PolicyService {
@@ -79,10 +82,27 @@ public class PolicyService {
         Policy policy = policyRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Policy not found"));
 
-        rolePolicyRepo.deleteByPolicyNumber(id);
-
-        policyRepo.deleteById(id);
+        rolePolicyRepo.deleteByPolicyNumber(policy.getId());
+        policyRepo.deleteById(policy.getId());
 
         return "Policy deleted successfully";
+    }
+
+    public List<PolicyDTO> getAllPolicies() {
+        List<RolePolicyMapping> list = rolePolicyRepo.findAll();
+        List<PolicyDTO> result = new ArrayList<>();
+        for(RolePolicyMapping rolePolicyMapping : list) {
+            PolicyDTO dto = new PolicyDTO();
+            dto.setRole(rolePolicyMapping.getRole());
+            Policy policy = policyRepo.findById(rolePolicyMapping.getPolicyNumber()).orElse(null);
+            if(policy == null) {
+                continue;
+            }
+            dto.setId(policy.getId());
+            dto.setPolicyName(policy.getPolicyName());
+            dto.setSpendingLimit(policy.getReimbursementLimit());
+            result.add(dto);
+        }
+        return result;
     }
 }
