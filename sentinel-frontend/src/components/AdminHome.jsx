@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { FileText, Users, TrendingUp, Shield } from 'lucide-react';
+import { FileText, Users, TrendingUp, Shield, ArrowLeft } from 'lucide-react';
 
 const AdminHome = () => {
   const navigate = useNavigate();
@@ -42,12 +42,21 @@ const AdminHome = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white shadow">
+       <div className="bg-white shadow">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">SENTINEL</h1>
-              <p className="text-gray-600 mt-1">Manage reimbursements and monitor fraud detection</p>
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => navigate('/')}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                title="Back to Home"
+              >
+                <ArrowLeft className="w-5 h-5 text-gray-600" />
+              </button>
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900">SENTINEL</h1>
+                <p className="text-gray-600 mt-1">Manage reimbursements and monitor fraud detection</p>
+              </div>
             </div>
             <div className="flex items-center gap-4">
               <div className="text-right">

@@ -21,6 +21,6 @@ public class RolePolicyMapping {
     @Column(nullable = false)
     private Role role;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String policyNumber;
 }

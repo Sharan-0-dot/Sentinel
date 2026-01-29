@@ -128,4 +128,25 @@ public class ReimbursementService {
         }
         return result;
     }
+
+    public List<AdminReimbursementDTO> getRequestsOfUser(String id) {
+        List<ReimbursementRequest> list = repo.findByEmployeeId(id);
+        List<AdminReimbursementDTO> result = new ArrayList<>();
+        for(ReimbursementRequest stored : list) {
+            AdminReimbursementDTO cur = new AdminReimbursementDTO();
+            cur.setId(stored.getId());
+            cur.setAmount(stored.getAmount());
+            cur.setCategory(stored.getCategory());
+            cur.setStatus(stored.getStatus());
+            cur.setEmployeeId(stored.getEmployeeId());
+            cur.setExpenseDate(stored.getExpenseDate());
+            cur.setVendorName(stored.getVendorName());
+            cur.setFraudLevel(stored.getFraudLevel());
+            cur.setFraudScore(stored.getFraudScore());
+            cur.setCreatedAt(stored.getCreatedAt());
+            cur.setDescription(stored.getFraudDescription());
+            result.add(cur);
+        }
+        return result;
+    }
 }

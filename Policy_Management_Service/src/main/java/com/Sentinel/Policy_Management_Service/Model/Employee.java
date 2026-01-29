@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Data
+@Table(name = "employee", schema = "public")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -21,6 +22,8 @@ public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
+
+    @Column(nullable = false, unique = true)
     private String name;
 
     @Enumerated(EnumType.STRING)

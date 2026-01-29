@@ -74,5 +74,15 @@ public class EmployeeService {
         return result;
     }
 
+    public EmployeeDTO getEmployeeByName(String name) {
+        Employee employee = employeeRepo.findByName(name).orElse(null);
+        if(employee == null) throw new RuntimeException("Employee not found");
+        EmployeeDTO dto = new EmployeeDTO();
+        dto.setId(employee.getId());
+        dto.setName(employee.getName());
+        dto.setRole(employee.getRole());
+        return dto;
+    }
+
 
 }

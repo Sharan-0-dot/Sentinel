@@ -17,6 +17,15 @@ public class EmployeeController {
     private final EmployeeService service;
     private final PolicyService policyService;
 
+    @GetMapping("/{name}")
+    public ResponseEntity<?> getEmployeeByName(@PathVariable String name) {
+        try {
+            return new ResponseEntity<>(service.getEmployeeByName(name), HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(e.getLocalizedMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
     @GetMapping("/")
     public ResponseEntity<?> getAllEmployee() {
         return new ResponseEntity<>(service.getAllEmployee(), HttpStatus.OK);

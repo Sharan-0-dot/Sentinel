@@ -10,6 +10,7 @@ import com.Sentinel.Policy_Management_Service.Repository.PolicyRepo;
 import com.Sentinel.Policy_Management_Service.Repository.RolePolicyRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,12 +79,12 @@ public class PolicyService {
         return policyDTO;
     }
 
+    @Transactional
     public String deletePolicyById(String id) {
         Policy policy = policyRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Policy not found"));
-
-        rolePolicyRepo.deleteByPolicyNumber(policy.getId());
-        policyRepo.deleteById(policy.getId());
+        rolePolicyRepo.deleteByPolicyNumber(id);
+        policyRepo.deleteById(id);
 
         return "Policy deleted successfully";
     }

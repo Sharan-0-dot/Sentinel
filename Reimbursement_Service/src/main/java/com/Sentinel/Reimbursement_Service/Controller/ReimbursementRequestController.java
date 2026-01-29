@@ -30,4 +30,13 @@ public class ReimbursementRequestController {
     public ResponseEntity<?> getAllRequests() {
         return new ResponseEntity<>(reimbursementService.getAllRequests(), HttpStatus.OK);
     }
+
+    @GetMapping("/requests/{id}")
+    public ResponseEntity<?> getAllRequestsOfEmployee(@PathVariable String id) {
+        try {
+            return new ResponseEntity<>(reimbursementService.getRequestsOfUser(id), HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(e.getLocalizedMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
 }
