@@ -104,7 +104,7 @@ public class ReimbursementService {
     private FraudLevel resolveFraudLevel(int fraudPoints) {
         if(fraudPoints < 25) return FraudLevel.LOW;
         if(fraudPoints < 50) return FraudLevel.MEDIUM;
-        if(fraudPoints < 75) return FraudLevel.HIGH;
+        if(fraudPoints < 90) return FraudLevel.HIGH;
         return FraudLevel.CONFIRMED;
     }
 

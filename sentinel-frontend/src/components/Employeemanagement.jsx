@@ -140,7 +140,6 @@ const EmployeeManagement = () => {
   };
 
   const getRoleIcon = (role) => {
-    // You can customize icons based on role if needed
     return <Briefcase className="w-4 h-4" />;
   };
 

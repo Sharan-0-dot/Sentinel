@@ -44,13 +44,12 @@ const CreateRequest = () => {
   const handleFileSelect = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Validate file type
+      
       if (!file.type.startsWith('image/')) {
         setError('Please select an image file (JPG, PNG, etc.)');
         return;
       }
 
-      // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
         setError('File size must be less than 5MB');
         return;
@@ -59,7 +58,6 @@ const CreateRequest = () => {
       setSelectedFile(file);
       setError('');
 
-      // Create preview URL
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreviewUrl(reader.result);
@@ -118,10 +116,8 @@ const CreateRequest = () => {
     setError('');
 
     try {
-      // Create FormData for multipart request
       const submitData = new FormData();
 
-      // Create the request DTO
       const requestDTO = {
         employeeId: employee.id,
         amount: parseFloat(formData.amount),
@@ -131,15 +127,12 @@ const CreateRequest = () => {
         description: formData.description
       };
 
-      // Append data as JSON blob
       submitData.append('data', new Blob([JSON.stringify(requestDTO)], {
         type: 'application/json'
       }));
 
-      // Append file
       submitData.append('file', selectedFile);
 
-      // Submit to backend
       const response = await api.post('/reimbursement/', submitData, {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -148,7 +141,6 @@ const CreateRequest = () => {
 
       setSuccess(true);
       
-      // Redirect after 2 seconds
       setTimeout(() => {
         navigate('/employee-home');
       }, 2000);

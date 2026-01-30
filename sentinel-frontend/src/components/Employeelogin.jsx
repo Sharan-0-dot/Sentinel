@@ -25,13 +25,10 @@ const EmployeeLogin = () => {
           `/employee/${encodeURIComponent(name.trim())}`
         );
     
-        // ✅ AXIOS: data is here
         const employeeData = response.data;
     
-        // Store employee data
         sessionStorage.setItem('employee', JSON.stringify(employeeData));
     
-        // Navigate
         navigate('/employee-home', { state: { employee: employeeData } });
     
       } catch (err) {
@@ -75,9 +72,7 @@ const EmployeeLogin = () => {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-6 py-16">
         <div className="max-w-md mx-auto">
-          {/* Login Card */}
           <div className="bg-white rounded-lg shadow p-8">
-            {/* Icon */}
             <div className="flex justify-center mb-6">
               <div className="bg-green-100 rounded-full p-4">
                 <User className="w-12 h-12 text-green-600" />

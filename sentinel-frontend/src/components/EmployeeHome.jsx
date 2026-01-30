@@ -12,7 +12,6 @@ const EmployeeHome = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Get employee data from location state or sessionStorage
     const employeeData = location.state?.employee || JSON.parse(sessionStorage.getItem('employee') || 'null');
     
     if (!employeeData) {
