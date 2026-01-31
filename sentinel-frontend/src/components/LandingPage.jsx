@@ -82,17 +82,20 @@ const LandingPage = () => {
           <div className="flex items-center justify-center gap-3 text-blue-800">
             <TrendingUp className="w-5 h-5" />
             <p className="text-sm md:text-base font-medium text-center">
-              This is a simple <span className="font-semibold">UI demonstration</span> of a production-grade reimbursement fraud detection system. 
-              The full backend includes OCR pipelines, fraud scoring, and policy enforcement services.
+              This application is a <span className="font-semibold">UI demonstration</span> of a
+              production-grade reimbursement fraud detection system.
+              The complete backend architecture includes OCR pipelines, fraud scoring engines,
+              and policy enforcement services.
               <span className="ml-1">
-                Interested organizations can contact
+                The demo is currently deployed on an
+                <span className="font-semibold"> AWS EC2 instance</span>.
+                Organizations interested in customization, integration, or further development may contact
                 <a
                   href="mailto:sharansc482@gmail.com"
                   className="font-semibold underline ml-1 hover:text-blue-900"
                 >
                   sharansc482@gmail.com
-                </a>
-                {" "}to adapt or take this project to the next level.
+                </a>.
               </span>
             </p>
           </div>

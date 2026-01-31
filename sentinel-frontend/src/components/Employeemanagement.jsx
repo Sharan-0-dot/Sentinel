@@ -415,8 +415,10 @@ const EmployeeManagement = () => {
               </div>
 
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                <p className="text-sm text-blue-800">
-                  <strong>Note:</strong> Policy will be automatically assigned based on the selected role.
+                <p className="text-sm text-blue-800 leading-relaxed">
+                  <strong>Important:</strong> Ensure that a policy is already configured for the selected role
+                  before creating the employee. Employees can only be assigned roles that have an
+                  associated policy defined in the system.
                 </p>
               </div>
 
