@@ -95,7 +95,36 @@ Only **LOW** and **MEDIUM** risk requests are persisted for future historical co
 
 ## Deployment Status
 
-The system has been **successfully deployed and tested on a local Kubernetes cluster using Minikube**.
+The system has been successfully deployed and tested on a local **Kubernetes cluster** using Minikube, with an additional **AWS EC2**-based demo deployment for external access and evaluation.
+
+AWS Demo Deployment
+
+A UI demonstration environment of Sentinel has been deployed on an AWS EC2 instance to showcase the system’s workflows and administrative capabilities.
+
+This deployment highlights:
+
+Realistic production-style service interaction
+
+Policy-driven employee management
+
+End-to-end reimbursement request processing
+
+Fraud scoring and classification logic
+
+⚠️ Note:
+This AWS deployment represents a demonstration environment.
+The complete production architecture—including OCR pipelines, fraud detection logic, and policy enforcement—is implemented in the backend services.
+
+🔗 Live Demo
+
+Demo URL:
+
+[http://sentinel.com](http://13.235.9.206:3000/)
+
+
+The demo is intended for functional evaluation and architectural understanding rather than performance benchmarking.
+
+Organizations or teams interested in extending, integrating, or deploying Sentinel in a production environment can reach out via the contact information below
 
 Deployment characteristics:
 
@@ -130,6 +159,7 @@ Sentinel
 │
 └── README.md
 ```
+
 
 ---
 
