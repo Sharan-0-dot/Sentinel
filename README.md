@@ -119,7 +119,7 @@ The complete production architecture—including OCR pipelines, fraud detection 
 
 Demo URL:
 
-[http://sentinel.com](http://13.235.9.206:3000/)
+[https://sentinel-app.duckdns.org/]
 
 
 The demo is intended for functional evaluation and architectural understanding rather than performance benchmarking.
